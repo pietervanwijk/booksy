@@ -1,15 +1,9 @@
 import React, { Component } from 'react';
 import './App.css';
 import axios from 'axios'
-import { createBrowserHistory } from "history";
-import {
-  BrowserRouter as Router,
-  Route,
-  Link,
-  withRouter
-} from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import logo from './logo.svg'
 
-const history = createBrowserHistory();
 
 export class Search extends Component {
 
@@ -22,10 +16,9 @@ export class Search extends Component {
   }
 
   search = (e) => {
+    let url = 'https://www.googleapis.com/books/v1/volumes?orderby=relevance&q=';
     let query = e.target.value.toLowerCase();
     if(query.length>1){
-
-      let url = 'https://www.googleapis.com/books/v1/volumes?orderby=relevance&q=';
 
       axios.get(url + query).then(response => {
         let suggestions = response.data.items;
@@ -36,9 +29,15 @@ export class Search extends Component {
               return(
                 <Link to={'/books/' + r.id}>
                   <li className="suggestion" key={r.id}>
-                    <img src={r.volumeInfo.imageLinks.smallThumbnail} className="list-image"/>
-                    <p className="list-author">{r.volumeInfo.authors[0]}</p>
-                    <p className="list-title">{r.volumeInfo.title}</p>
+                    <table>
+                      <td className="list-td">
+                        <img src={r.volumeInfo.imageLinks.smallThumbnail} className="list-image"/>
+                      </td>
+                      <td className="list-td text-td">
+                        <p className="list-author">{r.volumeInfo.authors[0]}</p>
+                        <p className="list-title">{r.volumeInfo.title}</p>
+                      </td>
+                    </table>
                   </li>
                 </Link>
               );
@@ -53,17 +52,10 @@ export class Search extends Component {
     }
   }
 
-  chooseBook = (selection) => {
-    let id = selection.id;
-    history.push("/books/" + id );
-  }
-
-
-
   render() {
     return (
       <div className="App">
-      <h1>Bksy</h1>
+      <img src={logo} className="logo"/>
       <input placeholder="Zoek je boek op auteur of titel" className="searchbox" id="searchbox" onChange={this.search} autoComplete="off"/>
       <ul className="suggestions-list" id="suggestions-list">{this.state.suggestionList}</ul>
       </div>
